@@ -1,0 +1,71 @@
+<VirtualHost *:443>
+	ServerName <%= @params[:server_name] %>
+
+	DocumentRoot /var/www/vhosts/<%= @params[:server_name] %>/www/
+	DirectoryIndex index.htm index.html index.php
+
+	<Directory /var/www/vhosts/<%= @params[:server_name] %>/www/>
+		Options +ExecCGI -Indexes
+		Order allow,deny
+		Allow from all
+		AllowOverride All
+	</Directory>
+
+	ErrorLog /var/www/vhosts/<%= @params[:server_name] %>/log/error-ssl.log
+	CustomLog /var/www/vhosts/<%= @params[:server_name] %>/log/access-ssl.log combined
+
+	SSLEngine on
+	SSLCertificateFile <%= node['ssl_certificates']['path'] + "/" + node['site-svntypo3org']['ssl_certificate'] + ".crt" %>
+	SSLCertificateKeyFile <%= node['ssl_certificates']['path'] + "/" + node['site-svntypo3org']['ssl_certificate'] + ".key" %>
+
+	AddExternalAuth forge-auth /opt/svn-helpers/apache-svn-authenticator.php
+	SetExternalAuthMethod forge-auth pipe
+
+	# authorization
+	PerlLoadModule Apache::Authn::Redmine
+
+
+	<Location /TYPO3v4/Extensions>
+		DAV svn
+		SVNPath /var/lib/svn/typo3v4/extensions
+
+		PerlAccessHandler Apache::Authn::Redmine::access_handler
+		PerlAuthenHandler Apache::Authn::Redmine::authen_handler
+
+		RedmineDSN "DBI:mysql:database=<%= @params[:forge_db_name] %>;host=<%= @params[:forge_db_host] %>"
+		RedmineDbUser "<%= @params[:forge_db_user] %>"
+		RedmineDbPass "<%= @params[:forge_db_pass] %>"
+		RedmineCacheCredsMax 50
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+
+		<Limit GET PROPFIND OPTIONS REPORT>
+			Require valid-user
+			Allow from all
+			Satisfy any
+		</Limit>
+		<LimitExcept GET PROPFIND OPTIONS REPORT>
+			Require valid-user
+		</LimitExcept>
+
+		# If a client tries to svn update which involves updating many files,
+		# the update request might result in an error Server sent unexpected
+		# return value (413 Request  Entity Too Large) in response to REPORT
+		# request,because the size of the update request exceeds the limit
+		# allowed by the server. You can avoid this error by disabling the
+		# request size limit by adding the line LimitXMLRequestBody 0
+		# between the <Location...> and </Location> lines.
+		 LimitXMLRequestBody 0
+
+	</Location>
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName <%= @params[:server_name] %>
+
+	RewriteEngine on
+	RewriteRule /.* https://svn.typo3.org/ [R=302,L]
+</VirtualHost>
