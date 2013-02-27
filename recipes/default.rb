@@ -121,3 +121,8 @@ template "#{web_dir}/www/.htaccess" do
   owner node['apache']['user']
   group node['apache']['group']
 end
+
+##############################################
+# RabbitMQ consumer
+##############################################
+include_recipe "site-svntypo3org::consumer"

@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+
+import pika
+import json
+import traceback
+import pickle
+import sys
+
+from subprocess import call
+
+credentials = pika.PlainCredentials("dev.svn.typo3.org", "dev.svn.typo3.org")
+conn_params = pika.ConnectionParameters(host = "srv134.typo3.org",
+                                        virtual_host = "infrastructure_dev",
+                                        credentials = credentials)
+queue_name = "org.typo3.forge.dev.repo.svn.create"
+
+
+
+def msg_consumer(channel, method, header, body):
+
+   sys.stderr.write("Message received: ")
+   sys.stderr.write(body)
+
+   try:
+      msg_process(body)
+
+      channel.basic_ack(delivery_tag = method.delivery_tag)
+      print "Message ACKed"
+
+   except Exception, e:
+      sys.stderr.write("Processing Message failed. NOT acking")
+      traceback.print_exc()
+
+def msg_process(msg_string):
+   msg = json.loads(msg_string)
+
+   print "Event: " + msg["event"]
+
+   if msg['event'] == "project_created":
+      project = msg['project']
+      sys.stderr.write("Project: " + project)
+
+      svn_directory = "/var/lib/svn/typo3v4/extensions/" + project
+
+      print "Executing: " + "svn mkdir --config-dir=/tmp/.svntmp --non-interactive -m \"Initializing project '" + project + "' (1/4)\" file://" + svn_directory
+      call("svn mkdir --config-dir=/tmp/.svntmp --non-interactive -m \"Initializing project '" + project + "' (1/4)\" file://" + svn_directory, shell=True)
+      call("svn mkdir --config-dir=/tmp/.svntmp --non-interactive -m \"Initializing project '" + project + "' (2/4)\" file://" + svn_directory + "/branches", shell=True)
+      call("svn mkdir --config-dir=/tmp/.svntmp --non-interactive -m \"Initializing project '" + project + "' (3/4)\" file://" + svn_directory + "/tags", shell=True)
+      call("svn mkdir --config-dir=/tmp/.svntmp --non-interactive -m \"Initializing project '" + project + "' (4/4)\" file://" + svn_directory + "/trunk", shell=True)
+
+      return True
+   else:
+      raise
+
+
+def msg_log(msg):
+   f = open('/tmp/mq.txt', 'a')
+   pickle.dump(msg, f)
+   f.close()
+
+try:
+   conn_broker = pika.BlockingConnection(conn_params)
+   channel = conn_broker.channel()
+   channel.queue_declare(queue = queue_name, durable = True)
+   channel.basic_consume(msg_consumer,
+                        queue = queue_name)
+   channel.start_consuming()
+
+except Exception, e:
+   traceback.print_exc()
