@@ -9,12 +9,11 @@ import sys
 from subprocess import call
 
 credentials = pika.PlainCredentials("dev.svn.typo3.org", "dev.svn.typo3.org")
-conn_params = pika.ConnectionParameters(host = "srv134.typo3.org",
-                                        virtual_host = "infrastructure_dev",
-                                        credentials = credentials)
-queue_name = "org.typo3.forge.dev.repo.svn.create"
-
-
+conn_params = pika.ConnectionParameters(host="srv134.typo3.org",
+                                        virtual_host="infrastructure_dev",
+                                        credentials=credentials)
+queue_name = "org.typo3.svn.dev.repo.svn.create"
+exchange_name = "org.typo3.forge.dev.repo.svn.create"
 
 def msg_consumer(channel, method, header, body):
 
@@ -24,7 +23,7 @@ def msg_consumer(channel, method, header, body):
    try:
       msg_process(body)
 
-      channel.basic_ack(delivery_tag = method.delivery_tag)
+      channel.basic_ack(delivery_tag=method.delivery_tag)
       print "Message ACKed"
 
    except Exception, e:
@@ -61,9 +60,12 @@ def msg_log(msg):
 try:
    conn_broker = pika.BlockingConnection(conn_params)
    channel = conn_broker.channel()
-   channel.queue_declare(queue = queue_name, durable = True)
+   channel.queue_declare(queue=queue_name, durable=True, auto_delete=False, exclusive=False)
+   channel.exchange_declare(exchange=exchange_name, type="fanout", durable=True, auto_delete=False)
+   channel.queue_bind(queue=queue_name, exchange=exchange_name)
+
    channel.basic_consume(msg_consumer,
-                        queue = queue_name)
+                        queue=queue_name)
    channel.start_consuming()
 
 except Exception, e:
