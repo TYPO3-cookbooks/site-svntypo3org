@@ -43,6 +43,7 @@ end
     source "auth/#{file}"
     owner node['apache']['user']
     group node['apache']['group']
+    mode 0755
   end
 end
 
