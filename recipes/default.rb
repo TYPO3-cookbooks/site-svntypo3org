@@ -71,8 +71,13 @@ apache_module "perl"
 
 forge_db_data = Hash.new
 
+forge_role = node['site-svntypo3org']['forge_role']
+if forge_role.nil?
+  raise "You must specify a role to search for while finding the forge server in node[:site-svntypo3org][:forge_role], e.g. site-forgetypo3org"
+end
+
 # read the password from the node having role:site-forgetypo3org
-search(:node, "role:site-forgetypo3org") do |n|
+search(:node, "role:" + forge_role) do |n|
   forge_db_data['host'] = n['fqdn']
   forge_db_data['user'] = n['site-forgetypo3org']['database_svn']['username']
   forge_db_data['pass'] = n['site-forgetypo3org']['database_svn']['password']
