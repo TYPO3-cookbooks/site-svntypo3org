@@ -47,15 +47,6 @@ end
   end
 end
 
-# authorization
-directory "usr/lib/perl5/Apache/Authn/" do
- mode 0755
-end
-
-template "/usr/lib/perl5/Apache/Authn/Redmine.pm" do
-  source "auth/Redmine.pm"
-  mode 0644
-end
 
 package "libapache2-mod-authnz-external"
 apache_module "authnz_external"
@@ -68,6 +59,17 @@ apache_module "authnz_external"
   package pkg
 end
 apache_module "perl"
+
+
+# authorization
+directory "/usr/lib/perl5/Apache/Authn/" do
+  mode 0755
+end
+
+template "/usr/lib/perl5/Apache/Authn/Redmine.pm" do
+  source "auth/Redmine.pm"
+  mode 0644
+end
 
 forge_db_data = Hash.new
 
