@@ -79,7 +79,18 @@ if forge_role.nil?
 end
 
 # read the password from the node having role:site-forgetypo3org
-search(:node, "role:" + forge_role) do |n|
+forge_search_string = "role:" + forge_role
+forge_nodes = search(:node, forge_search_string)
+
+if forge_nodes.size < 1
+  raise "Could not find forge server by searching for '#{forge_search_string}'"
+end
+
+if forge_nodes.size > 1
+  Chef::Log.warn "Found more than one forge server by searching for '#{forge_search_string}'"
+end
+
+forge_nodes.each do |n|
   forge_db_data['host'] = n['fqdn']
   forge_db_data['user'] = n['site-forgetypo3org']['database_svn']['username']
   forge_db_data['pass'] = n['site-forgetypo3org']['database_svn']['password']
