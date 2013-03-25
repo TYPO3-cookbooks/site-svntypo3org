@@ -8,9 +8,9 @@ import sys
 
 from subprocess import call
 
-credentials = pika.PlainCredentials("dev.svn.typo3.org", "dev.svn.typo3.org")
-conn_params = pika.ConnectionParameters(host="srv134.typo3.org",
-                                        virtual_host="infrastructure_dev",
+credentials = pika.PlainCredentials("<%= @options[:amqp_user] %>", "<%= @options[:amqp_password] %>")
+conn_params = pika.ConnectionParameters(host="<%= @options[:amqp_server] %>",
+                                        virtual_host="<%= @options[:amqp_vhost] %>",
                                         credentials=credentials)
 queue_name = "org.typo3.svn.dev.repo.svn.create"
 exchange_name = "org.typo3.forge.dev.repo.svn.create"
