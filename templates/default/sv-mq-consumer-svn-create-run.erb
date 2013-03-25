@@ -61,7 +61,7 @@ try:
    conn_broker = pika.BlockingConnection(conn_params)
    channel = conn_broker.channel()
    channel.queue_declare(queue=queue_name, durable=True, auto_delete=False, exclusive=False)
-   channel.exchange_declare(exchange=exchange_name, type="fanout", durable=True, auto_delete=False)
+   channel.exchange_declare(exchange=exchange_name, exchange_type="fanout", durable=True, auto_delete=False)
    channel.queue_bind(queue=queue_name, exchange=exchange_name)
 
    channel.basic_consume(msg_consumer,
