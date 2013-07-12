@@ -48,54 +48,13 @@ end
 end
 
 
+# packages for external authentication
 package "libapache2-mod-authnz-external"
 apache_module "authnz_external"
 
-%w{
-  libapache2-mod-perl2
-  libapache-dbi-perl
-  libdbd-mysql-perl
-}.each do |pkg|
-  package pkg
-end
-apache_module "perl"
+# packages for svn authorization
+package "libapache2-svn"
 
-
-# authorization
-directory "/usr/lib/perl5/Apache/Authn/" do
-  mode 0755
-end
-
-template "/usr/lib/perl5/Apache/Authn/Redmine.pm" do
-  source "auth/Redmine.pm"
-  mode 0644
-end
-
-forge_db_data = Hash.new
-
-forge_role = node['site-svntypo3org']['forge_role']
-if forge_role.nil?
-  raise "You must specify a role to search for while finding the forge server in node[:site-svntypo3org][:forge_role], e.g. site-forgetypo3org"
-end
-
-# read the password from the node having role:site-forgetypo3org
-forge_search_string = "role:" + forge_role
-forge_nodes = search(:node, forge_search_string)
-
-if forge_nodes.size < 1
-  raise "Could not find forge server by searching for '#{forge_search_string}'"
-end
-
-if forge_nodes.size > 1
-  Chef::Log.warn "Found more than one forge server by searching for '#{forge_search_string}'"
-end
-
-forge_nodes.each do |n|
-  forge_db_data['host'] = n['fqdn']
-  forge_db_data['user'] = n['site-forgetypo3org']['database_svn']['username']
-  forge_db_data['pass'] = n['site-forgetypo3org']['database_svn']['password']
-  forge_db_data['name'] = n['redmine']['database']['name']
-end
 
 ##############################################
 # SVN
@@ -113,10 +72,6 @@ ssl_certificate node['site-svntypo3org']['ssl_certificate']
 web_app "svn.typo3.org" do
   server_name "svn.typo3.org"
   template "apache/web_app.erb"
-  forge_db_host forge_db_data['host']
-  forge_db_user forge_db_data['user']
-  forge_db_pass forge_db_data['pass']
-  forge_db_name forge_db_data['name']
   notifies :restart, "service[apache2]"
 end
 
@@ -142,6 +97,6 @@ template "#{web_dir}/www/.htaccess" do
 end
 
 ##############################################
-# RabbitMQ consumer
+# Group sync
 ##############################################
-include_recipe "site-svntypo3org::consumer"
+include_recipe "site-svntypo3org::groupsync"
