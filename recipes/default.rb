@@ -6,7 +6,7 @@ user "svntypo3org" do
   group "svntypo3org"
 end
 
-web_dir = "/var/www/vhosts/svn.typo3.org"
+web_dir = "/var/www/vhosts/#{node['site-svntypo3org']['hostname']}"
 svn_dir = "/var/lib/svn"
 
 [
@@ -55,6 +55,10 @@ apache_module "authnz_external"
 # packages for svn authorization
 package "libapache2-svn"
 
+# the mods-available/authz_svn.load does not exist debian squeeze,
+# instead the autzh_svn module is automatically loaded with dav_svn
+apache_module "authz_svn" if node[:platform] == "debian" && node[:platform_version].to_i >= 7
+
 
 ##############################################
 # SVN
@@ -69,8 +73,8 @@ include_recipe "apache2::mod_ssl"
 
 ssl_certificate node['site-svntypo3org']['ssl_certificate']
 
-web_app "svn.typo3.org" do
-  server_name "svn.typo3.org"
+web_app node['site-svntypo3org']['hostname'] do
+  server_name node['site-svntypo3org']['hostname']
   template "apache/web_app.erb"
   notifies :restart, "service[apache2]"
 end

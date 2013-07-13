@@ -98,6 +98,10 @@ class GroupSync {
 		$projectData = json_decode(@file_get_contents($this->getUrl() . $url));
 		$projects = array();
 
+		if (!is_object($projectData)) {
+			throw new Exception("Did not receive a valid response while reading project data from " . $this->getUrl() . $url);
+		}
+
 		// read the project identifiers
 		foreach ($projectData->projects as $project) {
 			$projects[] = $project->identifier;
