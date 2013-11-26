@@ -7,18 +7,12 @@ if Chef::Config[:solo]
 
 else
 
-  # read API token from chef-vault
-  chef_gem "chef-vault"
-  require 'chef-vault'
-  vault    = ChefVault.new("passwords")
-  user     = vault.user(node['site-svntypo3org']['redmine_api_key_chef_vault_user'])
-  apikey   = user.decrypt_password
 
   # find the host name of the forge server
   forge_role = node['site-svntypo3org']['forge_role']
   if forge_role.nil?
-       raise "You must specify a role to search for while finding the forge server in node['site-svntypo3org']['forge_role'], e.g. site-forgetypo3org"
-    end
+    raise "You must specify a role to search for while finding the forge server in node['site-svntypo3org']['forge_role'], e.g. site-forgetypo3org"
+  end
   # find the node having role:site-forgetypo3org
   forge_search_string = "role:" + forge_role
   forge_nodes = search(:node, forge_search_string)
@@ -27,6 +21,11 @@ else
   Log.warn "Found more than one forge server by searching for '#{forge_search_string}'" if forge_nodes.size > 1
 
   redmine_hostname = forge_nodes[0]['redmine']['hostname']
+
+  include_recipe "chef-vault"
+  # read API token from chef-vault
+  apikey = chef_vault_password(redmine_hostname, "svntypo3org", "apitoken")
+
 end
 
 template sync_script do

@@ -6,6 +6,7 @@ version          "0.1.0"
 
 depends "ssl_certificates"
 depends "apache2"
+depends "chef-vault"
 
 # for rabbitmq consumer
 depends "runit"
