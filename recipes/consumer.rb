@@ -20,7 +20,7 @@ user = node['site-svntypo3org']['amqp']['user']
 
 Chef::Log.info "Looking for password rabbitmq.#{server_cleaned}.#{}"
 if all_password_data["rabbitmq"][server_cleaned][user].nil?
-  raise "Cannot find password for rabbitmq user '#{user}' in data bag 'passwords/#{node["chef_environment"]}'."
+  raise "Cannot find password for rabbitmq user '#{user}' in data bag 'passwords/#{node.chef_environment}'."
 end
 
 amqp_pass = all_password_data["rabbitmq"][server_cleaned][user]
