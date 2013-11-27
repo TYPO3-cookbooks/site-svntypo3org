@@ -29,8 +29,8 @@ else
 end
 
 template sync_script do
-  owner node[:apache][:user]
-  group node[:apache][:group]
+  owner node['apache']['user']
+  group node['apache']['group']
   source "groupsync/sync-groups.php"
   mode 00744
   variables(
@@ -41,7 +41,7 @@ template sync_script do
 end
 
 cron "sync-groups" do
-  user node[:apache][:user]
+  user node['apache']['user']
   minute "33"
   command sync_script + " > /dev/null"
 end

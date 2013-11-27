@@ -62,7 +62,7 @@ package "libapache2-svn"
 
 # the mods-available/authz_svn.load does not exist debian squeeze,
 # instead the autzh_svn module is automatically loaded with dav_svn
-apache_module "authz_svn" if node[:platform] == "debian" && node[:platform_version].to_i >= 7
+apache_module "authz_svn" if node['platform'] == "debian" && node['platform_version'].to_i >= 7
 
 
 ##############################################
