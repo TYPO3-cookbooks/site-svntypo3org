@@ -13,7 +13,7 @@ include('lib/class.tx_t3secsaltedpw_phpass.php');
 */
 function credentialsValid($user, $password) {
 	$credentials = array(
-		'apiKey' => '89e0793661446ddf3a89837012d91374f700973ab9935939a09332b34ed896c10b662ade5ef7cce974479957264c540a',
+		'apiKey' => '<%= @t3o_apikey %>',
 		'username' => $user,
 		'password' => $password,
 	);

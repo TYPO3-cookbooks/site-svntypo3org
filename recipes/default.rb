@@ -35,18 +35,23 @@ directory auth_dir do
   group node['apache']['group']
 end
 
-%w{
-  apache-svn-authenticator.php
-  helper-methods.php
-}.each do |file|
-  template "#{auth_dir}/#{file}" do
-    source "auth/#{file}"
-    owner node['apache']['user']
-    group node['apache']['group']
-    mode 0755
-  end
+template "#{auth_dir}/apache-svn-authenticator.php" do
+  source "auth/apache-svn-authenticator.php"
+  owner node['apache']['user']
+  group node['apache']['group']
+  mode 0755
 end
 
+include_recipe "chef-vault"
+apikey = chef_vault_password("typo3.org", "svntypo3org", "auth-apitoken")
+
+template "#{auth_dir}/helper-methods.php" do
+  source "auth/helper-methods.php"
+  owner node['apache']['user']
+  group node['apache']['group']
+  mode 0755
+  variables(:t3o_apikey => apikey)
+end
 
 # packages for external authentication
 package "libapache2-mod-authnz-external"
