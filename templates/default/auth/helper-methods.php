@@ -1,10 +1,5 @@
 <?php
 
-/** not needed anymore
-include('lib/class.tx_t3secsaltedpw_phpass.php');
-*/
-
-
 /**
 * Check if supplied credentials are valid
 * 

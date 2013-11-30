@@ -45,5 +45,5 @@
 	ServerName <%= @params[:server_name] %>
 
 	RewriteEngine on
-	RewriteRule /.* https://svn.typo3.org/ [R=302,L]
+	RewriteRule /.* https://<%= @params[:server_name] %>/ [R=302,L]
 </VirtualHost>

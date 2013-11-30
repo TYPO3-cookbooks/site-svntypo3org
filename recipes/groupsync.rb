@@ -7,7 +7,6 @@ if Chef::Config[:solo]
 
 else
 
-
   # find the host name of the forge server
   forge_role = node['site-svntypo3org']['forge_role']
   if forge_role.nil?
@@ -17,8 +16,7 @@ else
   forge_search_string = "role:" + forge_role
   forge_nodes = search(:node, forge_search_string)
 
-  raise "Could not find forge server by searching for '#{forge_search_string}'" if forge_nodes.size < 1
-  Log.warn "Found more than one forge server by searching for '#{forge_search_string}'" if forge_nodes.size > 1
+  raise "Expected to find exactly 1 forge server by searching for '#{forge_search_string}', found #{forge_nodes.size}" unless forge_nodes.size.eql?(1)
 
   redmine_hostname = forge_nodes[0]['redmine']['hostname']
 

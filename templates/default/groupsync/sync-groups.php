@@ -12,6 +12,7 @@ $allowedMemberTypes = array(
 	'Active Contributor',
 );
 
+// the user svntypo3org's redmine API token
 $token = "<%= @token %>";
 
 $hostname = "<%= @hostname %>";
