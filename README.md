@@ -1,6 +1,8 @@
 SVN Server
 ==========
 
+[![Build Status](https://travis-ci.org/TYPO3-cookbooks/site-svntypo3org.png)](https://travis-ci.org/TYPO3-cookbooks/site-svntypo3org)
+
 That old stupid relict..
 
 The implementation is not very flexible. Only important to keep it running for some couple of months left.
