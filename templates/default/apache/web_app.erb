@@ -16,6 +16,7 @@
 
 	SSLEngine on
 	SSLCertificateFile <%= node['ssl_certificates']['path'] + "/" + node['site-svntypo3org']['ssl_certificate'] + ".crt" %>
+	SSLCertificateChainFile <%= node['ssl_certificates']['path'] + "/" + node['site-svntypo3org']['ssl_certificate'] + ".crt" %>
 	SSLCertificateKeyFile <%= node['ssl_certificates']['path'] + "/" + node['site-svntypo3org']['ssl_certificate'] + ".key" %>
 
 	AddExternalAuth forge-auth /opt/svn-helpers/apache-svn-authenticator.php
