@@ -96,7 +96,7 @@ class GroupSync {
 	 */
 	protected function getAllProjects() {
 		$url = "/projects.json?limit=100000";
-		$projectData = json_decode(@file_get_contents($this->getUrl() . $url));
+		$projectData = json_decode(file_get_contents($this->getUrl() . $url));
 		$projects = array();
 
 		if (!is_object($projectData)) {
@@ -127,7 +127,7 @@ class GroupSync {
 	protected function getMembersForProject($identifier) {
 		$url = '/projects/' . $identifier . '/memberships.json';
 
-		$membershipData = json_decode(@file_get_contents($this->getUrl(true) . $url));
+		$membershipData = json_decode(file_get_contents($this->getUrl(true) . $url));
 
 		$members = array();
 
