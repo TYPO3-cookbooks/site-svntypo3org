@@ -41,5 +41,5 @@ end
 cron "sync-groups" do
   user node['apache']['user']
   minute "33"
-  command sync_script + " > /dev/null"
+  command sync_script + " --quiet"
 end
