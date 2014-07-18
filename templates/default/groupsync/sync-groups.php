@@ -31,6 +31,9 @@ class GroupSync {
 	protected $targetFile;
 	protected $ssl = false;
 
+	// Run quiet with "--quiet"
+	protected $quiet = false;
+
 	/** var string the URL without trailing / */
 	protected $hostname = '';
 
@@ -38,6 +41,10 @@ class GroupSync {
 
 	public function __construct() {
 		ini_set('user_agent', 'SVN Group Sync Script');
+
+		if (isset($GLOBALS['argv'][1]) && $GLOBALS['argv'][1] === '--quiet') {
+			$this->quiet = true;
+		}
 	}
 
 	public function setHostname($hostname) {
@@ -68,15 +75,15 @@ class GroupSync {
 	public function sync() {
 		$projects = $this->getAllProjects();
 
-		echo "Received list of " . count($projects) . " projects\n";
+		$this->log("Received list of " . count($projects) . " projects");
 
 		$projectsAndTheirMembers = array();
 
 		foreach ($projects as $projectIdentifier) {
-			echo "Processing project: " . $projectIdentifier . "\n";
+			$this->log("Processing project: " . $projectIdentifier);
 
 			$members = $this->getMembersForProject($projectIdentifier);
-			echo "Members: " . implode(",", $members) . "\n";
+			$this->log("Members: " . implode(",", $members));
 
 			$projectsAndTheirMembers[$projectIdentifier] = $members;
 		}
@@ -133,7 +140,7 @@ class GroupSync {
 
 		foreach ($membershipData->memberships as $membership) {
 
-			echo "Processing user '" . $membership->user->name . "'\n";
+			$this->log("Processing user '" . $membership->user->name . "'");
 
 			// read the role objects
 			$roles = array();
@@ -168,18 +175,18 @@ class GroupSync {
 	 * @return bool true $rolesOfTheUser contains at least one of the $required roles
 	 */
 	protected function rolesPermitAccess(array $rolesOfTheUser) {
-		echo "User has roles:" . implode(",", $rolesOfTheUser) ."\n";
+		$this->log("User has roles:" . implode(",", $rolesOfTheUser));
 
 		foreach ($this->requiredRoles as $requiredRole) {
 
 			// we search for any of the required roles to be listed as a member
 			if (in_array($requiredRole, $rolesOfTheUser)) {
-				echo "User is ALLOWED\n";
+				$this->log("User is ALLOWED");
 				return true;
 			}
 		}
 
-		echo "Could not find any of " . implode(",", $this->requiredRoles). "\n";
+		$this->log("Could not find any of " . implode(",", $this->requiredRoles));
 		return false;
 	}
 
@@ -231,6 +238,18 @@ class GroupSync {
 		return implode("\n", $lines);
 	}
 
+	/**
+	 * Log the current message to stdout
+	 *
+	 * @var string $message The message to be logged
+	 * @return void
+	 */
+	protected function log($message) {
+		if ($this->quiet === FALSE) {
+			echo $message . chr(10);
+		}
+	}
+
 }
 
 $sync = new GroupSync();
@@ -240,14 +259,5 @@ $sync->setRequiredRoles($allowedMemberTypes)
 	->enableSsl()
 	->writeTo($path)
 	->sync();
-
-
-
-
-
-
-
-
-
 
 ?>
