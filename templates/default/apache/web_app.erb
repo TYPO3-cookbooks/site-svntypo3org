@@ -22,7 +22,115 @@
 	AddExternalAuth forge-auth /opt/svn-helpers/apache-svn-authenticator.php
 	SetExternalAuthMethod forge-auth pipe
 
+########### TYPO3 Flow Projects ############
+	<Location /FLOW3>
+		DAV svn
+		SVNPath /var/lib/svn/flow3
 
+		AuthzSVNAccessFile /var/lib/svn/flow3/conf/authz
+
+		# try anonymous access first, resort to real authentication if necessary
+		AuthzSVNNoAuthWhenAnonymousAllowed On
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+	</Location>
+
+########### TYPO3 Neos Projects ############
+	<Location /TYPO3v5>
+		DAV svn
+		SVNPath /var/lib/svn/typo3v5
+
+		AuthzSVNAccessFile /var/lib/svn/typo3v5/conf/authz
+
+		# try anonymous access first, resort to real authentication if necessary
+		AuthzSVNNoAuthWhenAnonymousAllowed On
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+	</Location>
+
+########### TYPO3 Teams ####################
+	<Location /Teams>
+		DAV svn
+		SVNPath /var/lib/svn/teams
+
+		AuthzSVNAccessFile /var/lib/svn/teams/conf/authz
+
+		# try anonymous access first, resort to real authentication if necessary
+		AuthzSVNNoAuthWhenAnonymousAllowed On
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+	</Location>
+
+########### TYPO3 CMS Projects #############
+	<Location /TYPO3v4/Core>
+		DAV svn
+		SVNPath /var/lib/svn/typo3v4/core
+
+		AuthzSVNAccessFile /var/lib/svn/typo3v4/core/conf/authz.readonly
+
+		# try anonymous access first, resort to real authentication if necessary
+		AuthzSVNNoAuthWhenAnonymousAllowed On
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+	</Location>
+
+########### TYPO3 CMS Core Projects ########
+	<Location /TYPO3v4/CoreProjects>
+		DAV svn
+		SVNPath /var/lib/svn/typo3v4/core_projects
+
+		AuthzSVNAccessFile /var/lib/svn/typo3v4/core_projects/conf/authz
+
+		# try anonymous access first, resort to real authentication if necessary
+		AuthzSVNNoAuthWhenAnonymousAllowed On
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+	</Location>
+
+########### TYPO3 Documentation ############
+	<Location /TYPO3v4/Documentation>
+		DAV svn
+		SVNPath /var/lib/svn/typo3v4/documentation
+
+		AuthzSVNAccessFile /var/lib/svn/typo3v4/documentation/conf/authz
+
+		# try anonymous access first, resort to real authentication if necessary
+		AuthzSVNNoAuthWhenAnonymousAllowed On
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
+	</Location>
+
+########### TYPO3 CMS Extensions ###########
 	<Location /TYPO3v4/Extensions>
 		DAV svn
 		SVNPath /var/lib/svn/typo3v4/extensions
@@ -38,7 +146,24 @@
 		AuthName "TYPO3 SVN Access"
 		AuthBasicProvider external
 		AuthExternal forge-auth
+	</Location>
 
+########### Project repositories ###########
+	<Location /projects/typo3org>
+		DAV svn
+		SVNPath /var/lib/svn/projects/typo3org
+
+		AuthzSVNAccessFile /var/lib/svn/projects/typo3org/conf/authz
+
+		# No anonymous access to this repository
+		AuthzSVNNoAuthWhenAnonymousAllowed Off
+		Satisfy Any
+		Require valid-user
+
+		AuthType Basic
+		AuthName "TYPO3 SVN Access"
+		AuthBasicProvider external
+		AuthExternal forge-auth
 	</Location>
 </VirtualHost>
 
