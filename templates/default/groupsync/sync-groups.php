@@ -132,7 +132,7 @@ class GroupSync {
 	 * @throws Exception
 	 */
 	protected function getMembersForProject($identifier) {
-		$url = '/projects/' . $identifier . '/memberships.json';
+		$url = '/projects/' . $identifier . '/memberships.json?limit=100';
 
 		$membershipData = json_decode(file_get_contents($this->getUrl(true) . $url));
 
