@@ -1,0 +1,13 @@
+{
+  "id": "site-forge",
+  "run_list": ["role[site-forge]"],
+  "automatic": {
+    "ipaddress": "10.0.0.75",
+    "roles": ["site-forge"]
+  },
+  "normal": {
+    "redmine": {
+      "hostname": "forge.vagrant"
+    }
+  }
+}
