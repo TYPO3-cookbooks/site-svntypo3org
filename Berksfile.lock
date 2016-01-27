@@ -19,7 +19,7 @@ GRAPH
     yum-epel (>= 0.0.0)
   runit (1.7.6)
     packagecloud (>= 0.0.0)
-  site-svntypo3org (0.1.9)
+  site-svntypo3org (0.1.10)
     apache2 (>= 0.0.0)
     chef-vault (>= 0.0.0)
     python (>= 0.0.0)
