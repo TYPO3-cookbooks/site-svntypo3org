@@ -17,6 +17,11 @@ suites:
     run_list:
       - recipe[site-svntypo3org::default]
     attributes:
+      dev_mode: true
+      site-svntypo3org:
+        hostname: svn.vagrant
+        ssl_certificate: wildcard.vagrant
+        forge_role: site-forge
     driver_config:
       network:
       - ["private_network", {ip: "192.168.88.84"}]
