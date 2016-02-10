@@ -6,11 +6,12 @@ description      "Installs/Configures svn.typo3.org"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.1.10"
 
-depends "ssl_certificates"
-depends "apache2"
-depends "chef-vault"
-depends "t3-chef-vault"
+depends          "t3-base",           "~> 0.2.0"
 
+depends          "t3-chef-vault",     "~> 1.0.0"
+depends          "ssl_certificates",  "~> 1.1.0"
+
+depends          "apache2",           "= 3.1.0"
 # for rabbitmq consumer
-depends "runit"
-depends "python"
+depends          "runit",             "= 1.7.6"
+depends          "python",            "= 1.4.6"

@@ -1,4 +1,4 @@
-
+include_recipe "t3-base"
 
 group "svntypo3org"
 
